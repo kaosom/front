@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { EliminarUserModalComponent } from 'src/app/modals/eliminar-user-modal/eliminar-user-modal.component';
 import { AlumnosService } from 'src/app/services/alumnos.service';
 import { FacadeService } from 'src/app/services/facade.service';
 
@@ -98,41 +99,40 @@ export class AlumnosScreenComponent implements OnInit{
   }
 
 
-  public goEditar(idUser: number,  isUserId?: boolean){
-    // Administrador puede editar cualquier alumno
-    // Maestro puede editar cualquier alumno
-    // Alumno solo puede editar su propio registro
-  const userId = Number(this.facadeService.getUserId());
-  // Usar id como identificador para editar
-  if (this.rol === 'administrador' || this.rol === 'maestro' || (this.rol === 'alumno')) {
-      this.router.navigate([`/registro-usuarios/alumno/${idUser}`]);
-    } else {
-      alert('No tienes permisos para editar este alumno');
+  public goEditar(idUser: number){
+    this.router.navigate(["registro-usuarios/alumnos/"+idUser]);
+  }
+
+  public delete(idUser: number) {
+    // Se obtiene el ID del usuario en sesión, es decir, quien intenta eliminar
+    const userIdSession = Number(this.facadeService.getUserId());
+    // --------- Pero el parametro idUser (el de la función) es el ID del maestro que se quiere eliminar ---------
+    // Administrador puede eliminar cualquier maestro
+    // Maestro solo puede eliminar su propio registro
+    if (this.rol === 'administrador' || (this.rol === 'alumno' && userIdSession === idUser)) {
+      //Si es administrador o es maestro, es decir, cumple la condición, se puede eliminar
+      const dialogRef = this.dialog.open(EliminarUserModalComponent,{
+        data: {id: idUser, rol: 'alumno'}, //Se pasan valores a través del componente
+        height: '288px',
+        width: '328px',
+      });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isDelete){
+        console.log("Alumno eliminado");
+        alert("Alumno eliminado correctamente.");
+        //Recargar página
+        window.location.reload();
+      }else{
+        alert("Alumno no se ha podido eliminar.");
+        console.log("No se eliminó el alumno");
+      }
+    });
+    }else{
+      alert("No tienes permisos para eliminar este alumno.");
     }
   }
 
-  public delete(idUser: number, isUserId?: boolean){
-    // Administrador puede eliminar cualquier alumno
-    // Maestro puede eliminar cualquier alumno
-    // Alumno solo puede eliminar su propio registro
-  const userId = Number(this.facadeService.getUserId());
-  // Usar id como identificador para eliminar
-  if (this.rol === 'administrador' || this.rol === 'maestro' || (this.rol === 'alumno' && userId === idUser)) {
-      if (confirm('¿Seguro que deseas eliminar este alumno?')) {
-        this.alumnosService.eliminarAlumno(idUser).subscribe(
-          () => {
-            alert('Alumno eliminado correctamente');
-            this.obtenerAlumnos();
-          },
-          (error) => {
-            alert('No se pudo eliminar el alumno');
-          }
-        );
-      }
-    } else {
-      alert('No tienes permisos para eliminar este alumno');
-    }
-  }
 }
 //Esto va fuera de la llave que cierra la clase
 export interface DatosUsuario {
