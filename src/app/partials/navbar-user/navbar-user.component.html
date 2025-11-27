@@ -48,14 +48,39 @@
         <span>Gráficas</span>
       </li>
       <li
-        *ngIf="canSeeTeacherItems()"
-        routerLink="/materias"
-        routerLinkActive="active"
+        *ngIf="canSeeTeacherItems() || canRegisterMaterias()"
         class="scoop-navbar-item"
+        (click)="toggleMenu('materias')"
+        style="cursor: pointer;"
       >
         <span class="material-icons">library_books</span>
         <span>Materias</span>
+        <span class="material-icons" style="margin-left: auto; font-size: 1em;">
+          {{ expandedMenu === 'materias' ? 'expand_less' : 'expand_more' }}
+        </span>
       </li>
+      <ul *ngIf="expandedMenu === 'materias' && (canSeeTeacherItems() || canRegisterMaterias())" style="list-style: none; padding-left: 2rem;">
+        <li
+          *ngIf="canSeeTeacherItems()"
+          routerLink="/materias"
+          routerLinkActive="active"
+          class="scoop-navbar-item"
+          style="padding: 0.7rem 1.2rem;"
+        >
+          <span class="material-icons">list</span>
+          <span>Lista de Materias</span>
+        </li>
+        <li
+          *ngIf="canRegisterMaterias()"
+          routerLink="/registro-materias"
+          routerLinkActive="active"
+          class="scoop-navbar-item"
+          style="padding: 0.7rem 1.2rem;"
+        >
+          <span class="material-icons">add_circle</span>
+          <span>Registro de Materias</span>
+        </li>
+      </ul>
       <li
         *ngIf="canSeeTeacherItems()"
         routerLink="/eventos-academicos"
@@ -64,15 +89,6 @@
       >
         <span class="material-icons">event</span>
         <span>Eventos Académicos</span>
-      </li>
-      <li
-        *ngIf="canSeeTeacherItems()"
-        routerLink="/registro-materias"
-        routerLinkActive="active"
-        class="scoop-navbar-item"
-      >
-        <span class="material-icons">library_books</span>
-        <span>Registro Materias</span>
       </li>
     </ul>
     <button class="scoop-logout-btn" (click)="logout()">
@@ -165,15 +181,41 @@
           <span>Gráficas</span>
         </li>
         <li
-          *ngIf="canSeeTeacherItems()"
-          routerLink="/materias"
-          routerLinkActive="active"
+          *ngIf="canSeeTeacherItems() || canRegisterMaterias()"
           class="scoop-navbar-item"
-          (click)="closeSidebar()"
+          (click)="toggleMenu('materias')"
+          style="cursor: pointer;"
         >
           <span class="material-icons">library_books</span>
           <span>Materias</span>
+          <span class="material-icons" style="margin-left: auto; font-size: 1em;">
+            {{ expandedMenu === 'materias' ? 'expand_less' : 'expand_more' }}
+          </span>
         </li>
+        <ul *ngIf="expandedMenu === 'materias' && (canSeeTeacherItems() || canRegisterMaterias())" style="list-style: none; padding-left: 2rem;">
+          <li
+            *ngIf="canSeeTeacherItems()"
+            routerLink="/materias"
+            routerLinkActive="active"
+            class="scoop-navbar-item"
+            style="padding: 0.7rem 1.2rem;"
+            (click)="closeSidebar()"
+          >
+            <span class="material-icons">list</span>
+            <span>Lista de Materias</span>
+          </li>
+          <li
+            *ngIf="canRegisterMaterias()"
+            routerLink="/registro-materias"
+            routerLinkActive="active"
+            class="scoop-navbar-item"
+            style="padding: 0.7rem 1.2rem;"
+            (click)="closeSidebar()"
+          >
+            <span class="material-icons">add_circle</span>
+            <span>Registro de Materias</span>
+          </li>
+        </ul>
         <li
           *ngIf="canSeeTeacherItems()"
           routerLink="/eventos-academicos"
@@ -183,16 +225,6 @@
         >
           <span class="material-icons">event</span>
           <span>Eventos Académicos</span>
-        </li>
-        <li
-          *ngIf="canSeeTeacherItems()"
-          routerLink="/registro-materias"
-          routerLinkActive="active"
-          class="scoop-navbar-item"
-          (click)="closeSidebar()"
-        >
-          <span class="material-icons">library_books</span>
-          <span>Registro Materias</span>
         </li>
       </ul>
       <button class="scoop-logout-btn" (click)="logout(); closeSidebar()">

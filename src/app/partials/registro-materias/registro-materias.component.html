@@ -7,7 +7,7 @@
 
       <mat-form-field class="mat-input" appearance="outline">
         <mat-label>NRC</mat-label>
-        <input matInput maxlength="6"[(ngModel)]="materias.nrc" name="id" placeholder="Escribe el NRC" (keypress)="soloNumeros($event)">
+        <input matInput maxlength="6" [(ngModel)]="materias.nrc" name="id" placeholder="Escribe el NRC" (keypress)="soloNumeros($event)">
         <mat-hint align="end">{{materias.nrc?.length || 0}}/6</mat-hint>
       </mat-form-field>
       <div *ngIf="errors.nrc" class="invalid-feedback">{{ errors.nrc }}</div>
@@ -57,7 +57,8 @@
 
       <mat-form-field class="mat-input" appearance="outline">
         <mat-label>Salon</mat-label>
-        <input matInput [(ngModel)]="materias.salon" name="salon" placeholder="Escribe el salon">
+        <input matInput maxlength="15" [(ngModel)]="materias.salon" name="salon" placeholder="Escribe el salon" (keypress)="soloAlfanumericos($event)">
+        <mat-hint align="end">{{materias.salon?.length || 0}}/15</mat-hint>
       </mat-form-field>
       <div *ngIf="errors.salon" class="invalid-feedback">{{errors.salon}}</div>
 

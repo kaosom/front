@@ -5,6 +5,7 @@ import { MateriasService } from 'src/app/services/materias.service';
 import { FacadeService } from 'src/app/services/facade.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MaestrosService } from 'src/app/services/maestros.service';
+import { ActualizarUserModalComponent } from 'src/app/modals/actualizar-user-modal/actualizar-user-modal.component';
 declare var $:any;
 
 @Component({
@@ -33,7 +34,6 @@ export class RegistroMateriasComponent implements OnInit {
     {value: '3', nombre: 'Miercoles'},
     {value: '4', nombre: 'Jueves'},
     {value: '5', nombre: 'Viernes'},
-    {value: '6', nombre: 'Sabado'},
   ];
 
   constructor(
@@ -65,46 +65,94 @@ export class RegistroMateriasComponent implements OnInit {
   }
 
   public registrar(){
-    this.errors = [];
-    // this.errors = this.materiasService.validarMateria(this.materias)
-    // if(!$.isEmptyObject(this.errors)){
-    //   return false;
-    // }
-    console.log(this.materias);
-    this.materias.profesor = String(this.materias.profesor);
+    this.errors = {};
+    this.errors = this.materiasService.validarMateria(this.materias, this.editar);
+    if(!$.isEmptyObject(this.errors)){
+      return false;
+    }
+    
+    // Verificar que el NRC no esté duplicado
+    this.materiasService.obtenerListaMaterias().subscribe(
+      (response) => {
+        const listaMaterias = response;
+        const nrcDuplicado = listaMaterias.find((m: any) => m.nrc === this.materias.nrc);
+        if(nrcDuplicado){
+          this.errors["nrc"] = "El NRC ya existe en la base de datos";
+          return false;
+        }
+        
+        // Si no hay duplicado, proceder con el registro
+        console.log(this.materias);
+        this.materias.profesor = String(this.materias.profesor);
 
-    this.materiasService.registrarMateria(this.materias).subscribe(
-      (response)=>{
-        alert("Materia registrada correctamente");
-        console.log("Materia registrada: ", response);
-        this.location.back();
-      }, (error)=>{
-        alert("No se pudo registrar la materia");
+        this.materiasService.registrarMateria(this.materias).subscribe(
+          (response)=>{
+            alert("Materia registrada correctamente");
+            console.log("Materia registrada: ", response);
+            this.location.back();
+          }, (error)=>{
+            alert("No se pudo registrar la materia");
+          }
+        );
+      },
+      (error) => {
+        // Si hay error al obtener la lista, aún así intentar registrar
+        // El backend validará la unicidad
+        console.log(this.materias);
+        this.materias.profesor = String(this.materias.profesor);
+
+        this.materiasService.registrarMateria(this.materias).subscribe(
+          (response)=>{
+            alert("Materia registrada correctamente");
+            console.log("Materia registrada: ", response);
+            this.location.back();
+          }, (error)=>{
+            alert("No se pudo registrar la materia");
+          }
+        );
       }
     );
   }
 
   public actualizar(){
-    // //Validación
-    // this.errors = [];
+    //Validación
+    this.errors = {};
 
-    // this.errors = this.materiasService.validarMateria(this.materias, this.editar);
-    // if(!$.isEmptyObject(this.errors)){
-    //   return false;
-    // }
-    // console.log("Pasó la validación");
+    this.errors = this.materiasService.validarMateria(this.materias, this.editar);
+    if(!$.isEmptyObject(this.errors)){
+      return false;
+    }
+    console.log("Pasó la validación");
 
-    this.materiasService.editarMateria(this.materias).subscribe(
-      (response)=>{
-        alert("Materia editada correctamente");
-        console.log("Materia editada: ", response);
-        //Si se editó, entonces mandar al home
-        this.router.navigate(["home"]);
-      }, (error)=>{
-        alert("No se pudo editar la materia");
-        console.log("Error: ", error);
+    const materia = this.materias;
+    const nombreMateria = materia ? materia.nombre : '';
+    const dialogRef = this.dialog.open(ActualizarUserModalComponent,{
+      data: {
+        id: this.materias.id,
+        rol: 'materia',
+        nombre: nombreMateria
+      },
+      height: '288px',
+      width: '328px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isUpdate){
+        this.materiasService.editarMateria(this.materias).subscribe(
+          (response)=>{
+            alert("Materia editada correctamente");
+            console.log("Materia editada: ", response);
+            //Si se editó, entonces mandar al home
+            this.router.navigate(["home"]);
+          }, (error)=>{
+            alert("No se pudo editar la materia");
+            console.log("Error: ", error);
+          }
+        );
+      }else{
+        console.log("Actualización cancelada");
       }
-    );
+    });
   }
 
 
@@ -200,6 +248,12 @@ export class RegistroMateriasComponent implements OnInit {
 
   soloLetras(event: KeyboardEvent): void {
     if (!/^[a-zA-Z\s]+$/.test(event.key) && event.key !== 'Backspace') {
+      event.preventDefault();
+    }
+  }
+
+  soloAlfanumericos(event: KeyboardEvent): void {
+    if (!/^[a-zA-Z0-9\s]$/.test(event.key) && event.key !== 'Backspace') {
       event.preventDefault();
     }
   }

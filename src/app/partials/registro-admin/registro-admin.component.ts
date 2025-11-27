@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FacadeService } from 'src/app/services/facade.service';
 import { Location } from '@angular/common';
 import { AdministradoresService } from 'src/app/services/administradores.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ActualizarUserModalComponent } from 'src/app/modals/actualizar-user-modal/actualizar-user-modal.component';
 
 @Component({
   selector: 'app-registro-admin',
@@ -31,7 +33,8 @@ export class RegistroAdminComponent implements OnInit {
     public activatedRoute: ActivatedRoute,
     private administradoresService: AdministradoresService,
     private facadeService: FacadeService,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -122,21 +125,40 @@ export class RegistroAdminComponent implements OnInit {
       return false;
     }
 
-    // Ejecutamos el servicio de actualización
-    this.administradoresService.actualizarAdmin(this.admin).subscribe(
-      (response) => {
-        // Redirigir o mostrar mensaje de éxito
-        alert("Administrador actualizado exitosamente");
-        console.log("Administrador actualizado: ", response);
-        this.router.navigate(["administrador"]);
+    const nombreCompleto = this.admin.first_name && this.admin.last_name 
+      ? `${this.admin.first_name} ${this.admin.last_name}` 
+      : this.admin.first_name || this.admin.last_name || 'administrador';
+    
+    const dialogRef = this.dialog.open(ActualizarUserModalComponent,{
+      data: {
+        id: this.admin.id,
+        rol: 'administrador',
+        nombre: nombreCompleto
       },
-      (error) => {
-        // Manejar errores de la API
-        alert("Error al actualizar administrador");
-        console.error("Error al actualizar administrador: ", error);
-      }
-    );
+      height: '288px',
+      width: '328px',
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isUpdate){
+        // Ejecutamos el servicio de actualización
+        this.administradoresService.actualizarAdmin(this.admin).subscribe(
+          (response) => {
+            // Redirigir o mostrar mensaje de éxito
+            alert("Administrador actualizado exitosamente");
+            console.log("Administrador actualizado: ", response);
+            this.router.navigate(["administrador"]);
+          },
+          (error) => {
+            // Manejar errores de la API
+            alert("Error al actualizar administrador");
+            console.error("Error al actualizar administrador: ", error);
+          }
+        );
+      }else{
+        console.log("Actualización cancelada");
+      }
+    });
   }
 
   // Función para los campos solo de datos alfabeticos

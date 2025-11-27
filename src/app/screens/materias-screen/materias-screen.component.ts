@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { EliminarUserModalComponent } from 'src/app/modals/eliminar-user-modal/eliminar-user-modal.component';
@@ -19,15 +20,18 @@ export class MateriasScreenComponent implements OnInit {
   public rol: string = "";
   public token: string = "";
   public lista_materias: any[] = [];
+  public isAdmin: boolean = false;
 
   // Para la tabla
-  displayedColumns: string[] = ['nrc', 'nombre', 'seccion', 'dias', 'programa_edu', 'profesor', 'horario', 'salon', 'creditos', 'editar', 'eliminar'];
+  displayedColumns: string[] = ['nrc', 'nombre', 'seccion', 'dias', 'programa_edu', 'profesor', 'horario', 'salon', 'creditos'];
   dataSource = new MatTableDataSource<DatosMateria>(this.lista_materias as DatosMateria[]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   constructor(
@@ -40,16 +44,28 @@ export class MateriasScreenComponent implements OnInit {
   ngOnInit(): void {
     this.name_user = this.facadeService.getUserCompleteName();
     this.rol = this.facadeService.getUserGroup();
+    this.isAdmin = this.rol === 'administrador';
     // Validar que haya inicio de sesión
     this.token = this.facadeService.getSessionToken();
     console.log("Token: ", this.token);
     if (this.token == "") {
       this.router.navigate([""]);
     }
+    // Configurar columnas según permisos
+    if (this.isAdmin) {
+      this.displayedColumns.push('editar', 'eliminar');
+    }
     // Obtener materias
     this.obtenerMaterias();
     // Para paginador
     this.initPaginator();
+    // Configurar filtrado personalizado
+    this.dataSource.filterPredicate = (data: DatosMateria, filter: string) => {
+      const searchText = filter.toLowerCase();
+      const nrcMatch = data.nrc ? data.nrc.toString().toLowerCase().includes(searchText) : false;
+      const nombreMatch = data.nombre ? data.nombre.toLowerCase().includes(searchText) : false;
+      return nrcMatch || nombreMatch;
+    };
   }
 
   // Configuración del paginador
@@ -82,6 +98,13 @@ export class MateriasScreenComponent implements OnInit {
         if(this.lista_materias.length > 0){
           console.log("Materias: ", this.lista_materias);
           this.dataSource = new MatTableDataSource<DatosMateria>(this.lista_materias as DatosMateria[]);
+          // Reconfigurar filtrado personalizado
+          this.dataSource.filterPredicate = (data: DatosMateria, filter: string) => {
+            const searchText = filter.toLowerCase();
+            const nrcMatch = data.nrc ? data.nrc.toString().toLowerCase().includes(searchText) : false;
+            const nombreMatch = data.nombre ? data.nombre.toLowerCase().includes(searchText) : false;
+            return nrcMatch || nombreMatch;
+          };
           this.initPaginator();
         }
       },
@@ -118,6 +141,15 @@ export class MateriasScreenComponent implements OnInit {
         console.log("No se eliminó la materia");
       }
     });
+  }
+
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 }
 

@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AlumnosService } from 'src/app/services/alumnos.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ActualizarUserModalComponent } from 'src/app/modals/actualizar-user-modal/actualizar-user-modal.component';
 
 @Component({
   selector: 'app-registro-alumnos',
@@ -29,7 +31,8 @@ export class RegistroAlumnosComponent implements OnInit {
     private router: Router,
     private location : Location,
     public activatedRoute: ActivatedRoute,
-    private alumnosService: AlumnosService
+    private alumnosService: AlumnosService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -108,20 +111,41 @@ export class RegistroAlumnosComponent implements OnInit {
     if(Object.keys(this.errors).length > 0){
       return false;
     }
-     // Ejecutamos el servicio de actualización
-    this.alumnosService.actualizarAlumno(this.alumno).subscribe(
-      (response) => {
-        // Redirigir o mostrar mensaje de éxito
-        alert("Alumno actualizado exitosamente");
-        console.log("Alumno actualizado: ", response);
-        this.router.navigate(["alumno"]);
+    
+    const nombreCompleto = this.alumno.first_name && this.alumno.last_name 
+      ? `${this.alumno.first_name} ${this.alumno.last_name}` 
+      : this.alumno.first_name || this.alumno.last_name || 'alumno';
+    
+    const dialogRef = this.dialog.open(ActualizarUserModalComponent,{
+      data: {
+        id: this.alumno.id,
+        rol: 'alumno',
+        nombre: nombreCompleto
       },
-      (error) => {
-        // Manejar errores de la API
-        alert("Error al actualizar alumno");
-        console.error("Error al actualizar alumno: ", error);
+      height: '288px',
+      width: '328px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isUpdate){
+        // Ejecutamos el servicio de actualización
+        this.alumnosService.actualizarAlumno(this.alumno).subscribe(
+          (response) => {
+            // Redirigir o mostrar mensaje de éxito
+            alert("Alumno actualizado exitosamente");
+            console.log("Alumno actualizado: ", response);
+            this.router.navigate(["alumno"]);
+          },
+          (error) => {
+            // Manejar errores de la API
+            alert("Error al actualizar alumno");
+            console.error("Error al actualizar alumno: ", error);
+          }
+        );
+      }else{
+        console.log("Actualización cancelada");
       }
-    );
+    });
   }
 
   //Funciones para password
