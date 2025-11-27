@@ -46,7 +46,7 @@ export class AdminScreenComponent implements OnInit{
 
   public delete(idUser: number){
     const admin = this.lista_admins.find(a => a.id === idUser);
-    const nombreCompleto = admin ? `${admin.first_name} ${admin.last_name}` : '';
+    const nombreCompleto = admin && admin.user ? `${admin.user.first_name} ${admin.user.last_name}` : '';
     const dialogRef = this.dialog.open(EliminarUserModalComponent,{
       data: {
         id: idUser,

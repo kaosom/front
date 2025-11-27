@@ -98,7 +98,7 @@ export class RegistroAdminComponent implements OnInit {
           if(this.token && this.token !== ""){
             this.router.navigate(["administrador"]);
           }else{
-            this.router.navigate(["/"]);
+            this.router.navigate(["home"]);
           }
         },
         (error) => {

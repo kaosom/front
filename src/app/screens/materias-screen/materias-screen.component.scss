@@ -165,7 +165,7 @@ table {
   font-family: Nexa-Bold;
 }
 
-/* Saludo: “Bienvenido {user}” (base desktop/tablet) */
+/* Saludo: "Bienvenido {user}" (base desktop/tablet) */
 .title-perfil {
   margin-left: 3rem;
   font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2.25rem); /* ~22–36px */
@@ -217,7 +217,7 @@ table {
     margin-bottom: 0.4rem;
   }
 
-  /* Rol “Administrador” (izquierda, sin centrar) */
+  /* Rol "Administrador" (izquierda, sin centrar) */
   .row .col-12 .title-perfil:last-of-type {
     text-align: left;
     font-size: clamp(1.2rem, 0.95rem + 1vw, 1.7rem);
@@ -237,7 +237,7 @@ table {
 }
 
 /* ===============================================================
-   “Bisagra” 700–740 px — IZQUIERDA y sin salto visual (caso 700 px)
+   "Bisagra" 700–740 px — IZQUIERDA y sin salto visual (caso 700 px)
    =============================================================== */
 @media (min-width: 700px) and (max-width: 740px) {
   .row.mt-5.mb-5 > .col-12 br {
@@ -297,7 +297,7 @@ table {
     margin-bottom: 0.35rem; /* poco espacio */
   }
 
-  /* Rol “Administrador”: centrado y algo mayor */
+  /* Rol "Administrador": centrado y algo mayor */
   .row .col-12 .title-perfil:last-of-type {
     font-size: clamp(1.4rem, 1.15rem + 1.7vw, 2.1rem); /* ~22–33px */
     line-height: 1.15;

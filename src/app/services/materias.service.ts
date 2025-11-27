@@ -110,7 +110,7 @@ export class MateriasService {
   public editarMateria(data: any): Observable<any> {
     var token = this.facadeService.getSessionToken();
     var headers = new HttpHeaders({ 'Content-Type': 'application/json' , 'Authorization': 'Bearer '+token});
-    return this.http.put<any>(`${environment.url_api}/materias-edit/`, data, {headers:headers});
+    return this.http.put<any>(`${environment.url_api}/materias/?id=${data.id}`, data, {headers:headers});
   }
 
   /**
@@ -119,6 +119,6 @@ export class MateriasService {
   public eliminarMateria(nrc: number): Observable<any> {
     var token = this.facadeService.getSessionToken();
     var headers = new HttpHeaders({ 'Content-Type': 'application/json' , 'Authorization': 'Bearer '+token});
-    return this.http.delete<any>(`${environment.url_api}/materias-edit/${nrc}`,{headers:headers});
+    return this.http.delete<any>(`${environment.url_api}/materias/?nrc=${nrc}`,{headers:headers});
   }
 }

@@ -111,8 +111,10 @@ export class AlumnosScreenComponent implements OnInit{
     // Maestro solo puede eliminar su propio registro
     if (this.rol === 'administrador' || (this.rol === 'alumno' && userIdSession === idUser)) {
       //Si es administrador o es maestro, es decir, cumple la condición, se puede eliminar
+      const alumno = this.lista_alumnos.find(a => a.id === idUser);
+      const nombreCompleto = alumno ? `${alumno.first_name} ${alumno.last_name}` : '';
       const dialogRef = this.dialog.open(EliminarUserModalComponent,{
-        data: {id: idUser, rol: 'alumno'}, //Se pasan valores a través del componente
+        data: {id: idUser, rol: 'alumno', nombre: nombreCompleto}, //Se pasan valores a través del componente
         height: '288px',
         width: '328px',
       });

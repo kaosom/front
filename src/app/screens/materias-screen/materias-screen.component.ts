@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { EliminarUserModalComponent } from 'src/app/modals/eliminar-user-modal/eliminar-user-modal.component';
 import { FacadeService } from 'src/app/services/facade.service';
 import { MateriasService } from 'src/app/services/materias.service';
 
@@ -81,6 +82,7 @@ export class MateriasScreenComponent implements OnInit {
         if(this.lista_materias.length > 0){
           console.log("Materias: ", this.lista_materias);
           this.dataSource = new MatTableDataSource<DatosMateria>(this.lista_materias as DatosMateria[]);
+          this.initPaginator();
         }
       },
       (error) => {
@@ -94,17 +96,28 @@ export class MateriasScreenComponent implements OnInit {
   }
 
   public delete(id: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta materia?')) {
-      this.materiasService.eliminarMateria(id).subscribe(
-        (response) => {
-          alert("Materia eliminada correctamente");
-          this.obtenerMaterias(); // Recargar lista en lugar de recargar la página
-        },
-        (error) => {
-          alert("No se pudo eliminar la materia");
-        }
-      );
-    }
+    const materia = this.lista_materias.find(m => m.id === id);
+    const nombreMateria = materia ? materia.nombre : '';
+    const dialogRef = this.dialog.open(EliminarUserModalComponent,{
+      data: {
+        id: id,
+        rol: 'materia',
+        nombre: nombreMateria
+      },
+      height: '288px',
+      width: '328px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isDelete){
+        console.log("Materia eliminada");
+        alert("Materia eliminada correctamente");
+        this.obtenerMaterias();
+      }else{
+        alert("Materia no eliminada");
+        console.log("No se eliminó la materia");
+      }
+    });
   }
 }
 

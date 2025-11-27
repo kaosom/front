@@ -10,6 +10,12 @@
   background-color: #FFFFFF;
 }
 
+mat-form-field{
+  height: 48px!important;
+  text-align: left!important;
+  margin-bottom: 5%!important;
+}
+
 .header-home{
   display: flex;
   flex-direction: row;
@@ -35,7 +41,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   padding-top: 1.5rem;
-  gap: 1.5rem;
+  gap: 2.2rem;
 }
 
 .title-user{
@@ -46,6 +52,7 @@
   color: #231F20;
   text-transform: capitalize;
   opacity: 1;
+  line-height: 1.2;
 }
 
 .title-dias{

@@ -51,7 +51,8 @@ export class RegistroMateriasComponent implements OnInit {
       this.editar = true;
       this.idMateria = this.activatedRoute.snapshot.params['id'];
       console.log("ID Materia: ", this.idMateria);
-      this.materias = this.getMateriaByID();
+      this.materias = this.materiasService.esquemaMateria();
+      this.getMateriaByID();
     }else{
       this.materias = this.materiasService.esquemaMateria();
       this.token = this.facadeService.getSessionToken();
@@ -122,10 +123,14 @@ export class RegistroMateriasComponent implements OnInit {
   }
 
   public revisarSeleccion(nombre: string){
-    if(this.materias.dias_json){
-      var busqueda = this.materias.dias_json.find((element)=>element==nombre);
-      if(busqueda != undefined){
-        return true;
+    if(this.materias && this.materias.dias_json){
+      if(Array.isArray(this.materias.dias_json)){
+        var busqueda = this.materias.dias_json.find((element)=>element==nombre);
+        if(busqueda != undefined){
+          return true;
+        }else{
+          return false;
+        }
       }else{
         return false;
       }
@@ -137,12 +142,26 @@ export class RegistroMateriasComponent implements OnInit {
   public getMateriaByID(){
     this.materiasService.getMateriaByID(this.idMateria).subscribe(
       (response) => {
-        console.log("Datos de la materia: ", response)
         this.materias = response;
-        if (typeof this.materias.dias === 'string') {
-          this.materias.dias_json = JSON.parse(this.materias.dias_json.replace(/'/g, '"'));
+        if(this.materias.dias_json){
+          if(typeof this.materias.dias_json === 'string'){
+            try {
+              this.materias.dias_json = JSON.parse(this.materias.dias_json.replace(/'/g, '"'));
+            } catch(e) {
+              this.materias.dias_json = [];
+            }
+          }
+          if(!Array.isArray(this.materias.dias_json)){
+            this.materias.dias_json = [];
+          }
+        }else{
+          this.materias.dias_json = [];
         }
         console.log("Array de dias: ", this.materias.dias_json);
+        if(this.materias.profesor){
+          this.materias.profesor = Number(this.materias.profesor);
+        }
+        this.asignarProfesor();
       },
       (error) => {
         alert("Error al obtener los datos de la materia para editar");
@@ -155,11 +174,22 @@ export class RegistroMateriasComponent implements OnInit {
     this.maestrosService.obtenerListaMaestros().subscribe(
       (response) => {
         this.profesores = response;
+        this.asignarProfesor();
       },
       (error) => {
         console.error('Error al obtener la lista de profesores:', error);
       }
     );
+  }
+
+  private asignarProfesor(): void {
+    if(this.editar && this.materias && this.materias.profesor && this.profesores.length > 0){
+      const profesorId = Number(this.materias.profesor);
+      const profesorExiste = this.profesores.find(p => p.id === profesorId);
+      if(profesorExiste){
+        this.materias.profesor = profesorId;
+      }
+    }
   }
 
   soloNumeros(event: KeyboardEvent): void {

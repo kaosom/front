@@ -86,7 +86,7 @@ export class RegistroAlumnosComponent implements OnInit {
           if(this.token && this.token !== ""){
             this.router.navigate(["alumnos"]);
           }else{
-            this.router.navigate(["/"]);
+            this.router.navigate(["home"]);
           }
         },
         (error) => {

@@ -113,7 +113,7 @@ export class RegistroMaestrosComponent implements OnInit {
           if(this.token && this.token !== ""){
             this.router.navigate(["maestros"]);
           }else{
-            this.router.navigate(["/"]);
+            this.router.navigate(["home"]);
           }
         },
         (error) => {
