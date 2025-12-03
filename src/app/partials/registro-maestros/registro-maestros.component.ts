@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FacadeService } from 'src/app/services/facade.service';
 import { Location } from '@angular/common';
 import { MaestrosService } from 'src/app/services/maestros.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ActualizarUserModalComponent } from 'src/app/modals/actualizar-user-modal/actualizar-user-modal.component';
 
 @Component({
   selector: 'app-registro-maestros',
@@ -53,7 +55,8 @@ export class RegistroMaestrosComponent implements OnInit {
     private location : Location,
     public activatedRoute: ActivatedRoute,
     private facadeService: FacadeService,
-    private maestrosService: MaestrosService
+    private maestrosService: MaestrosService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -113,7 +116,7 @@ export class RegistroMaestrosComponent implements OnInit {
           if(this.token && this.token !== ""){
             this.router.navigate(["maestros"]);
           }else{
-            this.router.navigate(["/"]);
+            this.router.navigate(["home"]);
           }
         },
         (error) => {
@@ -135,21 +138,41 @@ export class RegistroMaestrosComponent implements OnInit {
     if(Object.keys(this.errors).length > 0){
       return false;
     }
-     // Ejecutamos el servicio de actualización
-    this.maestrosService.actualizarMaestro(this.maestro).subscribe(
-      (response) => {
-        // Redirigir o mostrar mensaje de éxito
-        alert("Maestro actualizado exitosamente");
-        console.log("Maestro actualizado: ", response);
-        this.router.navigate(["maestro"]);
-      },
-      (error) => {
-        // Manejar errores de la API
-        alert("Error al actualizar maestro");
-        console.error("Error al actualizar maestro: ", error);
-      }
-    );
 
+    const nombreCompleto = this.maestro.first_name && this.maestro.last_name
+      ? `${this.maestro.first_name} ${this.maestro.last_name}`
+      : this.maestro.first_name || this.maestro.last_name || 'maestro';
+
+    const dialogRef = this.dialog.open(ActualizarUserModalComponent,{
+      data: {
+        id: this.maestro.id,
+        rol: 'maestro',
+        nombre: nombreCompleto
+      },
+      height: '288px',
+      width: '328px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.isUpdate){
+        // Ejecutamos el servicio de actualización
+        this.maestrosService.actualizarMaestro(this.maestro).subscribe(
+          (response) => {
+            // Redirigir o mostrar mensaje de éxito
+            alert("Maestro actualizado exitosamente");
+            console.log("Maestro actualizado: ", response);
+            this.router.navigate(["maestro"]);
+          },
+          (error) => {
+            // Manejar errores de la API
+            alert("Error al actualizar maestro");
+            console.error("Error al actualizar maestro: ", error);
+          }
+        );
+      }else{
+        console.log("Actualización cancelada");
+      }
+    });
   }
 
   //Funciones para password

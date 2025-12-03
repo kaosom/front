@@ -5,9 +5,9 @@
       </button>
   </div>
   <div class="body-modal">
-      <h1 class="title-modal">Eliminar {{ data.rol === 'maestro' ? 'maestro' : data.rol === 'alumno' ? 'alumno' : data.rol === 'evento' ? 'evento académico' : 'usuario' }}</h1>
+      <h1 class="title-modal">Eliminar {{ data.rol === 'maestro' ? 'maestro' : data.rol === 'alumno' ? 'alumno' : data.rol === 'materia' ? 'materia' : data.rol === 'evento' ? 'evento académico' : 'usuario' }}</h1>
       <span class="descripcion">
-        Estás a punto de eliminar {{ data.rol === 'evento' ? 'el evento académico' : data.rol === 'maestro' ? 'al maestro' : data.rol === 'alumno' ? 'al alumno' : 'al usuario' }} "<b>{{data.nombre}}</b>". Una vez que lo elimines no podrás deshacer esta acción.
+        Estás a punto de eliminar {{ data.rol === 'evento' ? 'el evento académico' : data.rol === 'maestro' ? 'al maestro' : data.rol === 'alumno' ? 'al alumno' : data.rol === 'materia' ? 'la materia' : 'al usuario' }} "<b>{{data.nombre}}</b>". Una vez que lo elimines no podrás deshacer esta acción.
       </span>
       <div class="buttons-modal">
           <button mat-button class="btn-regresar" (click)="cerrar_modal()">

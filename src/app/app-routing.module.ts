@@ -21,8 +21,6 @@ const routes: Routes = [
       { path: 'login', component: LoginScreenComponent },
       { path: 'registro-usuarios', component: RegistroUsuariosScreenComponent },
       { path: 'registro-usuarios/:rol/:id', component: RegistroUsuariosScreenComponent },
-      { path: 'registro-materias', component: RegistroMateriasComponent},
-      { path: 'registro-materias/:id', component: RegistroMateriasComponent},
     ]
   },
   {
@@ -30,12 +28,13 @@ const routes: Routes = [
     component: DashboardLayoutComponent,
     children: [
       { path: 'home', component: HomeScreenComponent },
-      { path: 'administrador', component: AdminScreenComponent }, // Keep legacy route
+      { path: 'administrador', component: AdminScreenComponent },
       { path: 'alumnos', component: AlumnosScreenComponent },
       { path: 'maestros', component: MaestrosScreenComponent },
       { path: 'graficas', component: GraficasScreenComponent },
-      { path: 'administrador', component: AdminScreenComponent},
       { path: 'materias', component: MateriasScreenComponent},
+      { path: 'registro-materias', component: RegistroMateriasComponent},
+      { path: 'registro-materias/:id', component: RegistroMateriasComponent},
     ]
   },
   // fallback route

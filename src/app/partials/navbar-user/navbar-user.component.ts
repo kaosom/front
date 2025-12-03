@@ -148,5 +148,11 @@ export class NavbarUserComponent implements OnInit {
   canSeeRegisterItem(): boolean {
     return this.isAdmin() || this.isTeacher();
   }
+  canRegisterMaterias(): boolean {
+    return this.isAdmin();
+  }
+  canEditDeleteMaterias(): boolean {
+    return this.isAdmin();
+  }
 
 }

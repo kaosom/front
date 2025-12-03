@@ -114,8 +114,10 @@ export class MaestrosScreenComponent implements OnInit{
     // Maestro solo puede eliminar su propio registro
     if (this.rol === 'administrador' || (this.rol === 'maestro' && userIdSession === idUser)) {
       //Si es administrador o es maestro, es decir, cumple la condición, se puede eliminar
+      const maestro = this.lista_maestros.find(m => m.id === idUser);
+      const nombreCompleto = maestro ? `${maestro.first_name} ${maestro.last_name}` : '';
       const dialogRef = this.dialog.open(EliminarUserModalComponent,{
-        data: {id: idUser, rol: 'maestro'}, //Se pasan valores a través del componente
+        data: {id: idUser, rol: 'maestro', nombre: nombreCompleto}, //Se pasan valores a través del componente
         height: '288px',
         width: '328px',
       });
@@ -135,7 +137,14 @@ export class MaestrosScreenComponent implements OnInit{
       alert("No tienes permisos para eliminar este maestro.");
     }
   }
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 }
 
 //Esto va fuera de la llave que cierra la clase

@@ -18,6 +18,14 @@
             <span class="title-table">Lista de alumnos registrados</span>
           </div>
 
+           <div class="col-12 mb-3">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Buscar por nombre</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Escribe para filtrar">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+
         </div>
         <!-- Colocamos la tabla de alumnos -->
         <ng-container *ngIf="lista_alumnos.length > 0; else noData">

@@ -54,6 +54,7 @@ import { MaestrosScreenComponent } from './screens/maestros-screen/maestros-scre
 import { NavbarUserComponent } from './partials/navbar-user/navbar-user.component';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { EliminarUserModalComponent } from './modals/eliminar-user-modal/eliminar-user-modal.component';
+import { ActualizarUserModalComponent } from './modals/actualizar-user-modal/actualizar-user-modal.component';
 import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
 import { RegistroMateriasComponent } from './partials/registro-materias/registro-materias.component';
 import { EliminarMateriaComponentComponent } from './modals/eliminar-materia-component/eliminar-materia-component.component';
@@ -77,6 +78,7 @@ import { MateriasScreenComponent } from './screens/materias-screen/materias-scre
     NavbarUserComponent,
     SidebarComponent,
     EliminarUserModalComponent,
+    ActualizarUserModalComponent,
     GraficasScreenComponent,
     RegistroMateriasComponent,
     EliminarMateriaComponentComponent,
